@@ -62,3 +62,35 @@ severity_decisions:
 secrets:
   default: sanitize
   instruction: deny
+
+# Stricter table for *injection-class* findings specifically. A "sanitize"
+# outcome cannot neutralise injection *phrasing* (sanitize only strips
+# secrets/PII and hidden characters), so adversarial instruction-like text in a
+# stored memory is held for human review rather than kept. Anomaly/obfuscation
+# findings continue to use `severity_decisions` above. Omit this section to fall
+# back to the generic table.
+#
+# Trade-off: tightening knowledge `medium -> quarantine` can also hold back
+# legitimate content that *quotes* injection phrases (e.g. security
+# documentation). Relax the relevant cell if that matters for your corpus.
+injection_severity_decisions:
+  instruction:
+    critical: deny
+    high: deny
+    medium: deny       # any real injection signal on the control plane is denied
+    low: quarantine    # even a weak signal on the control plane warrants review
+  knowledge:
+    critical: deny
+    high: quarantine
+    medium: quarantine  # held for review (sanitize cannot neutralise phrasing)
+    low: allow
+  episodic:
+    critical: quarantine
+    high: quarantine
+    medium: allow
+    low: allow
+  scratch:
+    critical: quarantine
+    high: allow
+    medium: allow
+    low: allow
