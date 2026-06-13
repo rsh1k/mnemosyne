@@ -6,6 +6,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-06-13
+
+### Changed
+- `__version__` is now read from installed package metadata, so the CLI version
+  banner can never drift from `pyproject.toml`.
+
+### Fixed
+- `mnem version` now prints the correct command name (`mnem`) and the actual
+  installed version.
+
+## [0.1.1] - 2026-06-13
+
+### Changed
+- Renamed the CLI command to **`mnem`** (was `mnemosyne`) and added
+  `python -m mnemosyne` as an alias.
+
 ## [0.1.0] - 2026-06-13
 
 ### Added
@@ -44,5 +60,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   CI (lint/type/security/test matrix + doc-sync check), Dockerfile,
   docker-compose, and a release workflow.
 
-[Unreleased]: https://github.com/rsh1k/mnemosyne/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/rsh1k/mnemosyne/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.2
+[0.1.1]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.0
