@@ -1,0 +1,64 @@
+# Mnemosyne default policy
+# -------------------------
+# This declarative policy maps provenance -> trust tier and (surface, tier,
+# findings) -> decision. It is intentionally conservative ("secure by default").
+# Override by pointing MNEMOSYNE_POLICY_PATH at your own copy.
+
+version: 1
+
+# How each provenance is trusted before any content analysis.
+provenance_trust:
+  user_direct: trusted
+  agent_derived: trusted
+  tool_output: limited
+  retrieved_doc: limited
+  inter_agent: limited
+  external_web: untrusted
+  untrusted_file: untrusted
+  unknown: untrusted
+
+# The cardinal ASI06 invariant. Content below the required tier may not be
+# written to a given surface. INSTRUCTION is the agent control plane.
+surface_min_tier:
+  instruction: trusted   # only TRUSTED content may shape future behaviour
+  knowledge: limited
+  episodic: untrusted
+  scratch: untrusted
+
+# When the min-tier requirement is violated, what to do.
+# `quarantine` lets a human promote the content; `deny` rejects it.
+on_tier_violation:
+  instruction: deny
+  knowledge: quarantine
+  episodic: allow
+  scratch: allow
+
+# Severity-driven decisions from detector findings, evaluated per surface.
+# The most restrictive matching rule wins.
+severity_decisions:
+  instruction:
+    critical: deny
+    high: deny
+    medium: quarantine
+    low: allow
+  knowledge:
+    critical: deny
+    high: quarantine
+    medium: sanitize
+    low: allow
+  episodic:
+    critical: quarantine
+    high: sanitize
+    medium: allow
+    low: allow
+  scratch:
+    critical: sanitize
+    high: allow
+    medium: allow
+    low: allow
+
+# Secrets/PII handling: prefer redaction (sanitize) over hard denial so that
+# legitimate writes are not lost, except on the control plane.
+secrets:
+  default: sanitize
+  instruction: deny

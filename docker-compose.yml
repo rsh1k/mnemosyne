@@ -1,0 +1,26 @@
+services:
+  mnemosyne:
+    build: .
+    image: mnemosyne-guard:local
+    ports:
+      - "8000:8000"
+    environment:
+      # In real deployments inject these from a secret manager, not inline.
+      MNEMOSYNE_INTEGRITY_KEY: "${MNEMOSYNE_INTEGRITY_KEY:?set a strong key, e.g. openssl rand -hex 32}"
+      MNEMOSYNE_API_KEYS: "${MNEMOSYNE_API_KEYS:?set one or more comma-separated API keys}"
+      MNEMOSYNE_LOG_JSON: "true"
+      MNEMOSYNE_LOG_LEVEL: "INFO"
+      MNEMOSYNE_FAIL_CLOSED: "true"
+      MNEMOSYNE_REQUIRE_INTEGRITY_ON_READ: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz').status==200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    cap_drop:
+      - ALL

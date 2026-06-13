@@ -1,0 +1,93 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mnemosyne-guard"
+version = "0.1.0"
+description = "NIST-aligned Memory Integrity & Context-Provenance Firewall for agentic AI (OWASP ASI06)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "rsh1k" }]
+maintainers = [{ name = "rsh1k" }]
+keywords = [
+    "ai-security", "agentic-ai", "owasp", "asi06", "memory-poisoning",
+    "prompt-injection", "nist", "llm-security", "ai-firewall", "guardrails",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "httpx>=0.27",
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "bandit>=1.7",
+    "pip-audit>=2.7",
+]
+
+[project.scripts]
+mnemosyne = "mnemosyne.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rsh1k/mnemosyne"
+Repository = "https://github.com/rsh1k/mnemosyne"
+Documentation = "https://github.com/rsh1k/mnemosyne/tree/main/docs"
+Issues = "https://github.com/rsh1k/mnemosyne/issues"
+Changelog = "https://github.com/rsh1k/mnemosyne/blob/main/CHANGELOG.md"
+"Security Policy" = "https://github.com/rsh1k/mnemosyne/blob/main/SECURITY.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mnemosyne"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "C4", "SIM"]
+ignore = ["S101"]  # asserts are fine in tests
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B", "E501"]  # long attack-payload strings are kept inline for readability
+# Detector modules hold dense regex signature tables and example secret strings;
+# wrapping them hurts auditability more than the line-length helps.
+"src/mnemosyne/detectors/injection.py" = ["E501"]
+"src/mnemosyne/detectors/secrets_pii.py" = ["E501"]
+"src/mnemosyne/nist/__init__.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+packages = ["mnemosyne"]
+mypy_path = "src"
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+[tool.bandit]
+exclude_dirs = ["tests"]
