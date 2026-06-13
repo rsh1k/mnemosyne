@@ -3,7 +3,7 @@
 
 The catalog in ``mnemosyne.nist`` is the single source of truth. Running this
 script keeps the human-readable doc in lock-step with the code (and with the
-``/v1/compliance`` API response and ``mnemosyne nist`` CLI output).
+``/v1/compliance`` API response and ``mnem nist`` CLI output).
 
 Usage:
     python scripts/gen_nist_doc.py
@@ -25,7 +25,7 @@ def render() -> str:
     w(
         "> **Generated from `src/mnemosyne/nist/__init__.py`.** This is the single "
         "source of truth, also served at runtime via `GET /v1/compliance` and "
-        "`mnemosyne nist`. Do not edit by hand — change the catalog and run "
+        "`mnem nist`. Do not edit by hand — change the catalog and run "
         "`python scripts/gen_nist_doc.py`.\n"
     )
     w(
