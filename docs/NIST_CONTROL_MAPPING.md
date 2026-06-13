@@ -1,6 +1,6 @@
 # NIST & OWASP Control Mapping
 
-> **Generated from `src/mnemosyne/nist/__init__.py`.** This is the single source of truth, also served at runtime via `GET /v1/compliance` and `mnemosyne nist`. Do not edit by hand — change the catalog and run `python scripts/gen_nist_doc.py`.
+> **Generated from `src/mnemosyne/nist/__init__.py`.** This is the single source of truth, also served at runtime via `GET /v1/compliance` and `mnem nist`. Do not edit by hand — change the catalog and run `python scripts/gen_nist_doc.py`.
 
 Mnemosyne implements defense-in-depth against **OWASP ASI06 — Memory & Context Poisoning**. Each control below maps to the OWASP sub-vector it mitigates and to the relevant NIST references:
 

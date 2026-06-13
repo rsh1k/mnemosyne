@@ -47,7 +47,7 @@ dev = [
 ]
 
 [project.scripts]
-mnemosyne = "mnemosyne.cli:main"
+mnem = "mnemosyne.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/rsh1k/mnemosyne"

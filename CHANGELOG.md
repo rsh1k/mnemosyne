@@ -32,10 +32,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Storage:** `MemoryStore` / `QuarantineStore` protocols with in-memory and
   SQLite backends; namespace segmentation; human-in-the-loop quarantine
   promotion that elevates trust to the target surface's requirement.
-- **FastAPI sidecar** (bearer auth) and `mnemosyne` **CLI** (`scan`/`nist`/`version`).
+- **FastAPI sidecar** (bearer auth) and a CLI exposed as **`mnem`** with
+  `scan`/`nist`/`version`.
 - **NIST/OWASP control catalog** (MN-01…MN-11) mapping to NIST SP 800-53 Rev 5,
   SP 800-218A, AI 600-1, and CSF 2.0; surfaced via `GET /v1/compliance`,
-  `mnemosyne nist`, and a generated `docs/NIST_CONTROL_MAPPING.md`.
+  `mnem nist`, and a generated `docs/NIST_CONTROL_MAPPING.md`.
 - **Telemetry:** structured JSON logging and Prometheus metrics.
 - **Tests:** 131 tests including a red-team corpus that asserts 100% detection
   of the bundled ASI06 payloads and a 0% false-positive rate on benign writes.
