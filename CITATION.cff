@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "Mnemosyne: A NIST-aligned Memory Integrity & Context-Provenance Firewall for Agentic AI"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - name: "rsh1k"
+    alias: rsh1k
+repository-code: "https://github.com/rsh1k/mnemosyne"
+url: "https://github.com/rsh1k/mnemosyne"
+abstract: >-
+  Mnemosyne is a defense-in-depth library and gateway service that protects the
+  persistent memory and context surfaces of agentic AI systems against OWASP
+  ASI06 (Memory & Context Poisoning). It enforces a provenance-to-trust-tier
+  invariant that prevents untrusted content from reaching instruction
+  (control-plane) surfaces, runs pluggable detectors (injection, secrets/PII,
+  statistical anomaly, and invisible-Unicode obfuscation), signs records with
+  HMAC-SHA256, keeps a hash-chained tamper-evident audit log, and maps its
+  controls to NIST SP 800-53, SP 800-218A, AI 600-1, and CSF 2.0.
+keywords:
+  - ai-security
+  - agentic-ai
+  - owasp
+  - asi06
+  - memory-poisoning
+  - prompt-injection
+  - nist
+license: Apache-2.0
+version: 0.1.0
+date-released: "2026-06-13"

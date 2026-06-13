@@ -1,0 +1,8 @@
+# Default owner for everything in the repo
+* @rsh1k
+
+# Security-critical surfaces deserve explicit review
+/src/mnemosyne/policy/   @rsh1k
+/src/mnemosyne/integrity/ @rsh1k
+/src/mnemosyne/detectors/ @rsh1k
+/SECURITY.md             @rsh1k
