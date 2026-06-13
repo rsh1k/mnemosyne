@@ -73,6 +73,9 @@ jobs:
       - name: Run tests
         run: pytest -q
 
+      - name: Behavioural validation (75 end-to-end scenarios)
+        run: python validation_harness.py
+
   docker:
     name: Build container image
     runs-on: ubuntu-latest

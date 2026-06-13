@@ -43,7 +43,7 @@ def _cmd_version(_args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="mnemosyne",
+        prog="mnem",
         description="NIST-aligned memory-integrity firewall for agentic AI (OWASP ASI06).",
     )
     sub = parser.add_subparsers(dest="command", required=True)

@@ -6,6 +6,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-06-13
+
+### Changed
+- Injection-class findings are now governed by a dedicated, stricter policy
+  table (`injection_severity_decisions`): a medium-severity injection signal on
+  the `knowledge` surface is **quarantined** for review rather than sanitized,
+  because `sanitize` cannot neutralise injection phrasing. Anomaly/obfuscation
+  findings continue to use the generic `severity_decisions` table (so benign
+  behavioural drift and large writes are not over-blocked). The new section is
+  optional and falls back to the generic table for existing custom policies.
+- CLI program name is now `mnem` in all usage and error output.
+
+### Added
+- `validation_harness.py`: a 75-scenario end-to-end behavioural audit, run in
+  CI on every push/PR (exits non-zero on any scenario failure).
+
+## [0.1.3] - 2026-06-13
+
+### Changed
+- Release pipeline switched to PyPI Trusted Publishing (OIDC); no API tokens.
+
 ## [0.1.2] - 2026-06-13
 
 ### Changed
@@ -60,7 +81,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   CI (lint/type/security/test matrix + doc-sync check), Dockerfile,
   docker-compose, and a release workflow.
 
-[Unreleased]: https://github.com/rsh1k/mnemosyne/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/rsh1k/mnemosyne/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.4
+[0.1.3]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.3
 [0.1.2]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.2
 [0.1.1]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rsh1k/mnemosyne/releases/tag/v0.1.0
