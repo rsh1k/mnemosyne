@@ -1,9 +1,9 @@
 """Command-line interface.
 
 Usage:
-    mnemosyne scan --surface instruction --provenance external_web "text..."
-    mnemosyne nist            # print the NIST/OWASP control mapping (JSON)
-    mnemosyne version
+    mnem scan --surface instruction --provenance external_web "text..."
+    mnem nist            # print the NIST/OWASP control mapping (JSON)
+    mnem version
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def _cmd_nist(_args: argparse.Namespace) -> int:
 
 
 def _cmd_version(_args: argparse.Namespace) -> int:
-    print(f"mnemosyne {__version__}")
+    print(f"mnem {__version__}")
     return 0
 
 

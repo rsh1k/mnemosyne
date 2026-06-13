@@ -4,6 +4,9 @@ for agentic AI.
 Defense-in-depth against OWASP ASI06 (Memory & Context Poisoning).
 """
 
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
+
 from mnemosyne.core import (
     Decision,
     GuardOutcome,
@@ -18,7 +21,10 @@ from mnemosyne.core import (
     get_settings,
 )
 
-__version__ = "0.1.0"
+try:
+    __version__ = _pkg_version("mnemosyne-guard")
+except PackageNotFoundError:  # running from a source tree without an install
+    __version__ = "0.0.0+local"
 
 __all__ = [
     "__version__",
