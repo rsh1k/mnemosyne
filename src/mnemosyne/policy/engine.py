@@ -94,6 +94,27 @@ class PolicyEngine:
         raw = table.get(severity.value, "allow")
         return Decision(raw)
 
+    def _injection_severity_decision(
+        self, surface: MemorySurface, severity: Severity
+    ) -> Decision:
+        """Severity decision for *injection-class* findings.
+
+        Injection phrasing cannot be neutralised by ``sanitize`` (which only
+        strips secrets/PII and hidden characters), so adversarial instruction-
+        like text in stored memory is held for review rather than kept. Uses the
+        optional ``injection_severity_decisions`` policy section, falling back to
+        the generic ``severity_decisions`` table when it is absent (so existing
+        custom policies keep working unchanged).
+        """
+
+        if severity is Severity.NONE:
+            return Decision.ALLOW
+        table = self._doc.get("injection_severity_decisions", {}).get(surface.value)
+        if table is None:
+            return self._severity_decision(surface, severity)
+        raw = table.get(severity.value, "allow")
+        return Decision(raw)
+
     def _secrets_decision(self, surface: MemorySurface) -> Decision:
         sec = self._doc.get("secrets", {})
         raw = sec.get(surface.value, sec.get("default", "sanitize"))
@@ -110,18 +131,25 @@ class PolicyEngine:
         """Return the final decision and human-readable reasons.
 
         Secrets/PII findings are governed *only* by the dedicated sensitive-data
-        rule (so legitimate writes can be redacted rather than lost), while the
-        generic severity table governs injection/anomaly findings. The most
-        restrictive applicable decision always wins.
+        rule (so legitimate writes can be redacted rather than lost). Injection
+        findings are governed by a stricter table (sanitize cannot neutralise
+        injection phrasing), while anomaly/obfuscation findings use the generic
+        severity table. The most restrictive applicable decision always wins.
         """
 
         decision = Decision.ALLOW
         reasons: list[str] = []
 
         sensitive_kinds = {"secret", "pii"}
-        non_sensitive = ScanResult(
+        injection = ScanResult(
+            findings=[f for f in scan.findings if f.detector == "injection"]
+        )
+        other_non_sensitive = ScanResult(
             findings=[
-                f for f in scan.findings if f.metadata.get("kind") not in sensitive_kinds
+                f
+                for f in scan.findings
+                if f.detector != "injection"
+                and f.metadata.get("kind") not in sensitive_kinds
             ]
         )
         has_sensitive = any(
@@ -139,14 +167,24 @@ class PolicyEngine:
                 f"for surface '{surface.value}' -> {viol.value}"
             )
 
-        # 2. Severity-driven decision from non-sensitive findings.
-        sev = non_sensitive.max_severity
+        # 2a. Anomaly / obfuscation findings via the generic severity table.
+        sev = other_non_sensitive.max_severity
         sev_decision = self._severity_decision(surface, sev)
         if sev_decision is not Decision.ALLOW:
             decision = _most_restrictive(decision, sev_decision)
             reasons.append(
                 f"max finding severity '{sev.value}' on surface "
                 f"'{surface.value}' -> {sev_decision.value}"
+            )
+
+        # 2b. Injection findings via the stricter injection table.
+        inj_sev = injection.max_severity
+        inj_decision = self._injection_severity_decision(surface, inj_sev)
+        if inj_decision is not Decision.ALLOW:
+            decision = _most_restrictive(decision, inj_decision)
+            reasons.append(
+                f"injection severity '{inj_sev.value}' on surface "
+                f"'{surface.value}' -> {inj_decision.value}"
             )
 
         # 3. Sensitive-data (secrets/PII) handling via the dedicated rule.

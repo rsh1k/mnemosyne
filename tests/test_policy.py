@@ -184,6 +184,65 @@ class TestPrecedence:
         assert len(reasons) >= 2
 
 
+class TestInjectionVsAnomalySplit:
+    """Injection findings use a stricter table than anomaly findings.
+
+    Rationale: `sanitize` cannot neutralise injection *phrasing* (it only strips
+    secrets/PII and hidden chars), so a medium injection on knowledge is held
+    for review, while a medium *anomaly* (e.g. behavioural drift) stays gentle to
+    avoid false positives on legitimate large/odd-but-benign writes.
+    """
+
+    def test_medium_injection_on_knowledge_quarantines(self, policy: PolicyEngine):
+        finding = Finding(
+            detector="injection", severity=Severity.MEDIUM, score=0.45,
+            metadata={"families": ["override_directive"]},
+        )
+        decision, _ = policy.decide(
+            surface=MemorySurface.KNOWLEDGE, trust_tier=TrustTier.LIMITED,
+            scan=_scan(finding),
+        )
+        assert decision is Decision.QUARANTINE
+
+    def test_medium_anomaly_on_knowledge_stays_gentle(self, policy: PolicyEngine):
+        finding = Finding(
+            detector="anomaly", severity=Severity.MEDIUM, score=0.5,
+            metadata={"kind": "behavioral_drift"},
+        )
+        decision, _ = policy.decide(
+            surface=MemorySurface.KNOWLEDGE, trust_tier=TrustTier.LIMITED,
+            scan=_scan(finding),
+        )
+        # Generic table: knowledge.medium -> sanitize (not quarantine).
+        assert decision is Decision.SANITIZE
+
+    def test_any_injection_on_instruction_denies(self, policy: PolicyEngine):
+        finding = Finding(
+            detector="injection", severity=Severity.MEDIUM, score=0.45,
+            metadata={"families": ["persistence"]},
+        )
+        decision, _ = policy.decide(
+            surface=MemorySurface.INSTRUCTION, trust_tier=TrustTier.TRUSTED,
+            scan=_scan(finding),
+        )
+        assert decision is Decision.DENY
+
+    def test_fallback_to_generic_when_section_absent(self):
+        # A policy without injection_severity_decisions falls back to the table.
+        doc = {
+            "provenance_trust": {"user_direct": "trusted"},
+            "surface_min_tier": {"knowledge": "limited"},
+            "severity_decisions": {"knowledge": {"medium": "sanitize"}},
+        }
+        engine = PolicyEngine(doc)
+        finding = Finding(detector="injection", severity=Severity.MEDIUM, score=0.45)
+        decision, _ = engine.decide(
+            surface=MemorySurface.KNOWLEDGE, trust_tier=TrustTier.LIMITED,
+            scan=_scan(finding),
+        )
+        assert decision is Decision.SANITIZE
+
+
 class TestValidation:
     def test_missing_section_raises(self):
         with pytest.raises(PolicyConfigurationError):

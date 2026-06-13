@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mnemosyne-guard"
-version = "0.1.3"
+version = "0.1.4"
 description = "NIST-aligned Memory Integrity & Context-Provenance Firewall for agentic AI (OWASP ASI06)."
 readme = "README.md"
 requires-python = ">=3.10"
