@@ -288,6 +288,27 @@ for the MemoryTrap class of attack:
 If you are standardising on the OWASP project, Mnemosyne's detectors and policy
 concepts map cleanly onto it; the two can also run side by side.
 
+
+## Relationship to revoco
+
+[`revoco`](https://github.com/rsh1k/revoco) merges
+[`veritrail`](https://github.com/rsh1k/veritrail) and
+[`mcp-gate`](https://github.com/rsh1k/mcp-gate) and adds a reversal layer — planning
+an undo *before* an action runs, then rolling back a compromised grant's whole
+subtree in one call.
+
+**Very little of this package moved with them.** revoco took a handful of obfuscation
+patterns — zero-width, Unicode-tag and bidi characters — into its argument scanner,
+and nothing else. The memory gateway, the trust-tier invariant, quarantine, read-time
+re-scanning, HMAC integrity at rest and the behavioural drift baseline are all only
+here.
+
+That is worth stating plainly because it is easy to assume the merge subsumed this
+one. It did not: revoco governs *actions*, this governs *what an agent remembers*.
+They address different halves of ASI06, and running one is not running the other.
+
+All Apache-2.0, all maintained.
+
 ## License
 
 Apache-2.0 — see [`LICENSE`](LICENSE).
